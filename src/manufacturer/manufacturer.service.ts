@@ -1,26 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateManufacturerDto } from './dto/create-manufacturer.dto';
 import { UpdateManufacturerDto } from './dto/update-manufacturer.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Manufacturer } from './entities/manufacturer.entity';
 
 @Injectable()
 export class ManufacturerService {
+  constructor(
+    @InjectRepository(Manufacturer)
+    private manufacturerRepository: Repository<Manufacturer>,
+  ) {}
+
   create(createManufacturerDto: CreateManufacturerDto) {
-    return 'This action adds a new manufacturer';
+    return this.manufacturerRepository.save(createManufacturerDto);
   }
 
   findAll() {
-    return `This action returns all manufacturer`;
+    return this.manufacturerRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} manufacturer`;
+  async findOne(id: number) {
+    const findResult = await this.manufacturerRepository.findOne({
+      where: { ManufacturerID: id },
+    });
+
+    if (!findResult) {
+      throw new NotFoundException(`Manufacturer #${id} not found`);
+    }
+
+    return findResult;
   }
 
-  update(id: number, updateManufacturerDto: UpdateManufacturerDto) {
-    return `This action updates a #${id} manufacturer`;
+  async update(id: number, updateManufacturerDto: UpdateManufacturerDto) {
+    const updateResult = await this.manufacturerRepository.update(
+      id,
+      updateManufacturerDto,
+    );
+
+    if (updateResult.affected === 0) {
+      throw new NotFoundException(`Manufacturer #${id} not found`);
+    }
+
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} manufacturer`;
+  async remove(id: number) {
+    const removeResult = await this.manufacturerRepository.delete(id);
+
+    if (removeResult.affected === 0) {
+      throw new NotFoundException(`Manufacturer #${id} not found`);
+    }
+
+    return { message: `Manufacturer #${id} deleted` };
   }
 }

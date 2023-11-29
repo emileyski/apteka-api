@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { SupplyService } from './supply.service';
 import { CreateSupplyDto } from './dto/create-supply.dto';
 import { UpdateSupplyDto } from './dto/update-supply.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('supply')
 @Controller('supply')
 export class SupplyController {
   constructor(private readonly supplyService: SupplyService) {}

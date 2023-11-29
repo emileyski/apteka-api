@@ -32,6 +32,8 @@ export class Medication {
   })
   Category: Category;
 
-  @ManyToOne(() => DosageForm, { onDelete: 'CASCADE' })
+  @ManyToOne(() => DosageForm, (dosageForm) => dosageForm.Medications, {
+    onDelete: 'CASCADE',
+  })
   DosageForm: DosageForm;
 }

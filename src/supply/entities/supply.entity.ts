@@ -1,5 +1,5 @@
 import { Medication } from 'src/medication/entities/medication.entity';
-import { OrderItem } from 'src/order-item/entities/order-item.entity';
+import { OrderItem } from 'src/sale/entities/order-item.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

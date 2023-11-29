@@ -1,26 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDosageFormDto } from './dto/create-dosage-form.dto';
 import { UpdateDosageFormDto } from './dto/update-dosage-form.dto';
+import { DosageForm } from './entities/dosage-form.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class DosageFormService {
+  constructor(
+    @InjectRepository(DosageForm)
+    private dosageFormRepository: Repository<DosageForm>,
+  ) {}
+
   create(createDosageFormDto: CreateDosageFormDto) {
-    return 'This action adds a new dosageForm';
+    return this.dosageFormRepository.save(createDosageFormDto);
   }
 
   findAll() {
-    return `This action returns all dosageForm`;
+    return this.dosageFormRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} dosageForm`;
+  async findOne(id: number) {
+    const findResult = await this.dosageFormRepository.findOne({
+      where: { DosageFormID: id },
+    });
+
+    if (!findResult) {
+      throw new NotFoundException(`Dosage Form #${id} not found`);
+    }
+
+    return findResult;
   }
 
-  update(id: number, updateDosageFormDto: UpdateDosageFormDto) {
-    return `This action updates a #${id} dosageForm`;
+  async update(id: number, updateDosageFormDto: UpdateDosageFormDto) {
+    const updateResult = await this.dosageFormRepository.update(
+      id,
+      updateDosageFormDto,
+    );
+
+    if (updateResult.affected === 0) {
+      throw new NotFoundException(`Dosage Form #${id} not found`);
+    }
+
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} dosageForm`;
+  async remove(id: number) {
+    const removeResult = await this.dosageFormRepository.delete(id);
+
+    if (removeResult.affected === 0) {
+      throw new NotFoundException(`Dosage Form #${id} not found`);
+    }
+
+    return { message: `Dosage Form #${id} deleted` };
   }
 }

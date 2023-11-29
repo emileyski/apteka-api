@@ -1,5 +1,5 @@
 import { Employee } from 'src/employee/entities/employee.entity';
-import { OrderItem } from 'src/order-item/entities/order-item.entity';
+import { OrderItem } from 'src/sale/entities/order-item.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -19,7 +19,7 @@ export class Sale {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   TotalPrice: number;
 
-  @Column({ type: 'date', nullable: false })
+  @Column({ type: 'date', nullable: false, default: () => 'CURRENT_TIMESTAMP' })
   SaleDate: Date;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.Sale, {

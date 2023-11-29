@@ -10,7 +10,9 @@ import {
 import { ActiveIngredientService } from './active-ingredient.service';
 import { CreateActiveIngredientDto } from './dto/create-active-ingredient.dto';
 import { UpdateActiveIngredientDto } from './dto/update-active-ingredient.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('active-ingredient')
 @Controller('active-ingredient')
 export class ActiveIngredientController {
   constructor(

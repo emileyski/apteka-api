@@ -1,26 +1,116 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Sale } from './entities/sale.entity';
+import { OrderItem } from './entities/order-item.entity';
+import { Repository } from 'typeorm';
+import { SupplyService } from 'src/supply/supply.service';
 
 @Injectable()
 export class SaleService {
-  create(createSaleDto: CreateSaleDto) {
-    return 'This action adds a new sale';
+  constructor(
+    @InjectRepository(Sale)
+    private saleRepository: Repository<Sale>,
+    @InjectRepository(OrderItem)
+    private orderItemRepository: Repository<OrderItem>,
+    private supplyService: SupplyService,
+  ) {}
+
+  async create(createSaleDto: CreateSaleDto) {
+    const supplies = await this.supplyService.findByIds(
+      createSaleDto.OrderItems.map((orderItem) => orderItem.SupplyID),
+    );
+
+    const TotalPrice = supplies.reduce(
+      (totalPrice, supply) =>
+        totalPrice +
+        supply.UnitPrice *
+          createSaleDto.OrderItems.find(
+            (orderItem) => orderItem.SupplyID === supply.SupplyID,
+          ).Quantity,
+      0,
+    );
+
+    const sale = this.saleRepository.create({
+      Employee: { EmployeeID: createSaleDto.EmployeeID },
+      OrderItems: createSaleDto.OrderItems.map((orderItem) => ({
+        Supply: { SupplyID: orderItem.SupplyID },
+        Quantity: orderItem.Quantity,
+      })),
+      TotalPrice,
+    });
+
+    await this.saleRepository.save(sale);
+    const orderItems = await this.orderItemRepository.save(
+      sale.OrderItems.map((orderItem) => ({ ...orderItem, Sale: sale })),
+    );
+
+    return {
+      ...sale,
+      OrderItems: orderItems.map((orderItem) => {
+        delete orderItem.Sale;
+        return orderItem;
+      }),
+    };
   }
 
-  findAll() {
-    return `This action returns all sale`;
+  async findAll() {
+    const findResult = await this.saleRepository.find({
+      relations: [
+        'Employee',
+        'OrderItems',
+        'OrderItems.Supply',
+        'OrderItems.Supply.Medication',
+      ],
+    });
+
+    return findResult.map((sale) => {
+      delete sale.Employee.Login;
+      delete sale.Employee.Password;
+      delete sale.Employee.ResidenceAddress;
+      delete sale.Employee.PhoneNumber;
+      delete sale.Employee.BirthDate;
+
+      return sale;
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} sale`;
+  async findOne(id: number) {
+    const findResult = await this.saleRepository.findOne({
+      where: { SaleID: id },
+      relations: [
+        'Employee',
+        'OrderItems',
+        'OrderItems.Supply',
+        'OrderItems.Supply.Medication',
+      ],
+    });
+
+    if (!findResult) {
+      throw new NotFoundException(`Sale #${id} not found`);
+    }
+
+    delete findResult.Employee.Login;
+    delete findResult.Employee.Password;
+    delete findResult.Employee.ResidenceAddress;
+    delete findResult.Employee.PhoneNumber;
+    delete findResult.Employee.BirthDate;
+
+    return findResult;
   }
 
   update(id: number, updateSaleDto: UpdateSaleDto) {
-    return `This action updates a #${id} sale`;
+    throw new NotFoundException();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} sale`;
+  async remove(id: number) {
+    const removeResult = await this.saleRepository.delete(id);
+
+    if (removeResult.affected === 0) {
+      throw new NotFoundException(`Sale #${id} not found`);
+    }
+
+    return { message: `Sale #${id} deleted` };
   }
 }

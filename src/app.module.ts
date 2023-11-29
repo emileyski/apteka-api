@@ -9,7 +9,6 @@ import { PositionModule } from './position/position.module';
 import { EmployeeModule } from './employee/employee.module';
 import { SupplyModule } from './supply/supply.module';
 import { SaleModule } from './sale/sale.module';
-import { OrderItemModule } from './order-item/order-item.module';
 
 @Module({
   imports: [
@@ -36,7 +35,6 @@ import { OrderItemModule } from './order-item/order-item.module';
     EmployeeModule,
     SupplyModule,
     SaleModule,
-    OrderItemModule,
   ],
   controllers: [],
   providers: [],
