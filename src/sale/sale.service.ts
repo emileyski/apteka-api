@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,6 +26,18 @@ export class SaleService {
       createSaleDto.OrderItems.map((orderItem) => orderItem.SupplyID),
     );
 
+    const canBeCreated = supplies.every(
+      (supply) =>
+        supply.CurrentQuantity >=
+        createSaleDto.OrderItems.find(
+          (orderItem) => orderItem.SupplyID === supply.SupplyID,
+        ).Quantity,
+    );
+
+    if (!canBeCreated) {
+      throw new BadRequestException(`Not enough supplies`);
+    }
+
     const TotalPrice = supplies.reduce(
       (totalPrice, supply) =>
         totalPrice +
@@ -33,7 +49,8 @@ export class SaleService {
     );
 
     const sale = this.saleRepository.create({
-      Employee: { EmployeeID: createSaleDto.EmployeeID },
+      //TODO: fix this (add employee)
+      // Employee: { EmployeeID: createSaleDto.EmployeeID },
       OrderItems: createSaleDto.OrderItems.map((orderItem) => ({
         Supply: { SupplyID: orderItem.SupplyID },
         Quantity: orderItem.Quantity,
@@ -45,6 +62,14 @@ export class SaleService {
     const orderItems = await this.orderItemRepository.save(
       sale.OrderItems.map((orderItem) => ({ ...orderItem, Sale: sale })),
     );
+
+    supplies.forEach((supply) => {
+      supply.CurrentQuantity -= createSaleDto.OrderItems.find(
+        (orderItem) => orderItem.SupplyID === supply.SupplyID,
+      ).Quantity;
+    });
+
+    await this.supplyService.saveMany(supplies);
 
     return {
       ...sale,
@@ -58,7 +83,7 @@ export class SaleService {
   async findAll() {
     const findResult = await this.saleRepository.find({
       relations: [
-        'Employee',
+        // 'Employee',
         'OrderItems',
         'OrderItems.Supply',
         'OrderItems.Supply.Medication',
@@ -66,11 +91,12 @@ export class SaleService {
     });
 
     return findResult.map((sale) => {
-      delete sale.Employee.Login;
-      delete sale.Employee.Password;
-      delete sale.Employee.ResidenceAddress;
-      delete sale.Employee.PhoneNumber;
-      delete sale.Employee.BirthDate;
+      //TODO: fix this (add employee)
+      // delete sale.Employee.Login;
+      // delete sale.Employee.Password;
+      // delete sale.Employee.ResidenceAddress;
+      // delete sale.Employee.PhoneNumber;
+      // delete sale.Employee.BirthDate;
 
       return sale;
     });
@@ -80,7 +106,7 @@ export class SaleService {
     const findResult = await this.saleRepository.findOne({
       where: { SaleID: id },
       relations: [
-        'Employee',
+        // 'Employee',
         'OrderItems',
         'OrderItems.Supply',
         'OrderItems.Supply.Medication',
@@ -91,11 +117,12 @@ export class SaleService {
       throw new NotFoundException(`Sale #${id} not found`);
     }
 
-    delete findResult.Employee.Login;
-    delete findResult.Employee.Password;
-    delete findResult.Employee.ResidenceAddress;
-    delete findResult.Employee.PhoneNumber;
-    delete findResult.Employee.BirthDate;
+    //TODO: fix this
+    // delete findResult.Employee.Login;
+    // delete findResult.Employee.Password;
+    // delete findResult.Employee.ResidenceAddress;
+    // delete findResult.Employee.PhoneNumber;
+    // delete findResult.Employee.BirthDate;
 
     return findResult;
   }

@@ -21,6 +21,7 @@ export class ActiveIngredientController {
 
   @Post()
   create(@Body() createActiveIngredientDto: CreateActiveIngredientDto) {
+    console.log('in controller');
     return this.activeIngredientService.create(createActiveIngredientDto);
   }
 

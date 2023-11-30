@@ -36,8 +36,8 @@ export class Employee {
   @Column({ length: 20, nullable: true })
   PhoneNumber: string;
 
-  @OneToMany(() => Sale, (sale) => sale.Employee, {
-    onDelete: 'CASCADE',
-  })
-  Sales: Sale[];
+  // @OneToMany(() => Sale, (sale) => sale.Employee, {
+  //   onDelete: 'CASCADE',
+  // })
+  // Sales: Sale[];
 }

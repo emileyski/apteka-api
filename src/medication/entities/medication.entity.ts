@@ -2,7 +2,14 @@ import { ActiveIngredient } from 'src/active-ingredient/entities/active-ingredie
 import { Category } from 'src/category/entities/category.entity';
 import { DosageForm } from 'src/dosage-form/entities/dosage-form.entity';
 import { Manufacturer } from 'src/manufacturer/entities/manufacturer.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Supply } from 'src/supply/entities/supply.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 export class Medication {
@@ -36,4 +43,9 @@ export class Medication {
     onDelete: 'CASCADE',
   })
   DosageForm: DosageForm;
+
+  @OneToMany(() => Supply, (supply) => supply.Medication, {
+    onDelete: 'CASCADE',
+  })
+  Supplies: Supply[];
 }

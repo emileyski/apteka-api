@@ -16,6 +16,9 @@ export class Supply {
   @Column({ type: 'int', nullable: false })
   Quantity: number;
 
+  @Column({ type: 'int', nullable: false })
+  CurrentQuantity: number;
+
   @Column({ type: 'date', default: () => 'GETDATE()' })
   SupplyDate: Date;
 
@@ -25,7 +28,9 @@ export class Supply {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   UnitPrice: number;
 
-  @ManyToOne(() => Medication, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Medication, (medication) => medication.Supplies, {
+    onDelete: 'CASCADE',
+  })
   Medication: Medication;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.Supply, {

@@ -13,8 +13,8 @@ export class Sale {
   @PrimaryGeneratedColumn()
   SaleID: number;
 
-  @ManyToOne(() => Employee, { onDelete: 'CASCADE' })
-  Employee: Employee;
+  // @ManyToOne(() => Employee, { onDelete: 'CASCADE' })
+  // Employee: Employee;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   TotalPrice: number;

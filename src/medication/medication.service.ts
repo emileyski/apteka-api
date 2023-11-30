@@ -24,10 +24,27 @@ export class MedicationService {
     });
   }
 
-  findAll() {
-    return this.medicationRepository.find({
-      relations: ['Category', 'ActiveIngredient', 'DosageForm', 'Manufacturer'],
-    });
+  findAll(name?: string, withSupplies?: string) {
+    const query = this.medicationRepository
+      .createQueryBuilder('medication')
+      .leftJoinAndSelect('medication.Category', 'Category')
+      .leftJoinAndSelect('medication.ActiveIngredient', 'ActiveIngredient')
+      .leftJoinAndSelect('medication.DosageForm', 'DosageForm')
+      .leftJoinAndSelect('medication.Manufacturer', 'Manufacturer');
+
+    if (name !== undefined) {
+      const lowercasedName = name.toLowerCase();
+      query.where('LOWER(medication.TradeName) LIKE :name', {
+        name: `%${lowercasedName}%`,
+      });
+    }
+
+    if (withSupplies === 'true') {
+      console.log(withSupplies);
+      query.leftJoinAndSelect('medication.Supplies', 'Supplies');
+    }
+
+    return query.getMany();
   }
 
   async findOne(id: number) {
@@ -43,11 +60,36 @@ export class MedicationService {
     return findResult;
   }
 
+  async findOneWithSupplies(id: number) {
+    const findResult = await this.medicationRepository.findOne({
+      where: { MedicationID: id },
+      relations: [
+        'Category',
+        'ActiveIngredient',
+        'DosageForm',
+        'Manufacturer',
+        'Supplies',
+      ],
+    });
+
+    if (!findResult) {
+      throw new NotFoundException(`Medication #${id} not found`);
+    }
+
+    return findResult;
+  }
+
   async update(id: number, updateMedicationDto: UpdateMedicationDto) {
-    const updateResult = await this.medicationRepository.update(
-      id,
-      updateMedicationDto,
-    );
+    const updateResult = await this.medicationRepository.update(id, {
+      PackagingQuantity: updateMedicationDto.PackagingQuantity,
+      TradeName: updateMedicationDto.TradeName,
+      Category: { CategoryID: updateMedicationDto.CategoryID },
+      ActiveIngredient: {
+        ActiveIngredientID: updateMedicationDto.ActiveIngredientID,
+      },
+      DosageForm: { DosageFormID: updateMedicationDto.DosageFormID },
+      Manufacturer: { ManufacturerID: updateMedicationDto.ManufacturerID },
+    });
 
     if (!updateResult.affected) {
       throw new NotFoundException(`Medication #${id} not found`);

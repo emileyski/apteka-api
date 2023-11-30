@@ -15,12 +15,52 @@ export class SupplyService {
   create(createSupplyDto: CreateSupplyDto) {
     return this.supplyRepository.save({
       ...createSupplyDto,
+      CurrentQuantity: createSupplyDto.Quantity,
       Medication: { MedicationID: createSupplyDto.MedicationID },
     });
   }
 
-  findAll() {
-    return this.supplyRepository.find({ relations: ['Medication'] });
+  async findAll(
+    name?: string,
+    minPrice?: number,
+    maxPrice?: number,
+    minQuantity?: number,
+    maxQuantity?: number,
+    orderBy?: string,
+  ) {
+    const query = this.supplyRepository
+      .createQueryBuilder('supply')
+      .leftJoinAndSelect('supply.Medication', 'Medication');
+
+    if (name !== undefined) {
+      const lowercasedName = name.toLowerCase();
+      query.where('LOWER(Medication.TradeName) LIKE :name', {
+        name: `%${lowercasedName}%`,
+      });
+    }
+
+    if (minPrice !== undefined) {
+      query.andWhere('supply.UnitPrice >= :minPrice', { minPrice });
+    }
+
+    if (maxPrice !== undefined) {
+      query.andWhere('supply.UnitPrice <= :maxPrice', { maxPrice });
+    }
+
+    if (minQuantity !== undefined) {
+      query.andWhere('supply.CurrentQuantity >= :minQuantity', { minQuantity });
+    }
+
+    if (maxQuantity !== undefined) {
+      query.andWhere('supply.CurrentQuantity <= :maxQuantity', { maxQuantity });
+    }
+
+    if (orderBy !== undefined) {
+      const [column, order] = orderBy.split(':');
+      query.orderBy(`supply.${column}`, order.toUpperCase() as 'ASC' | 'DESC');
+    }
+
+    return query.getMany();
   }
 
   async findOne(id: number) {
@@ -67,5 +107,9 @@ export class SupplyService {
     }
 
     return { message: `Supply #${id} deleted` };
+  }
+
+  saveMany(supplies: Supply[]) {
+    return this.supplyRepository.save(supplies);
   }
 }
