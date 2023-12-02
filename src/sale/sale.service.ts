@@ -26,13 +26,17 @@ export class SaleService {
       createSaleDto.OrderItems.map((orderItem) => orderItem.SupplyID),
     );
 
-    const canBeCreated = supplies.every(
-      (supply) =>
-        supply.CurrentQuantity >=
-        createSaleDto.OrderItems.find(
-          (orderItem) => orderItem.SupplyID === supply.SupplyID,
-        ).Quantity,
-    );
+    const canBeCreated = supplies.every((supply) => {
+      const orderItem = createSaleDto.OrderItems.find(
+        (orderItem) => orderItem.SupplyID === supply.SupplyID,
+      );
+      const supplyExpiryDate = new Date(supply.ExpiryDate);
+
+      return (
+        supply.CurrentQuantity >= orderItem.Quantity &&
+        supplyExpiryDate >= new Date()
+      );
+    });
 
     if (!canBeCreated) {
       throw new BadRequestException(`Not enough supplies`);
