@@ -27,6 +27,8 @@ export class SupplyService {
     minQuantity?: number,
     maxQuantity?: number,
     orderBy?: string,
+    showExpired?: boolean,
+    showWithoutQuantity?: boolean,
   ) {
     const query = this.supplyRepository
       .createQueryBuilder('supply')
@@ -58,6 +60,14 @@ export class SupplyService {
     if (orderBy !== undefined) {
       const [column, order] = orderBy.split(':');
       query.orderBy(`supply.${column}`, order.toUpperCase() as 'ASC' | 'DESC');
+    }
+
+    if (showExpired !== true) {
+      query.andWhere('supply.ExpiryDate >= :now', { now: new Date() });
+    }
+
+    if (showWithoutQuantity === undefined || showWithoutQuantity === false) {
+      query.andWhere('supply.CurrentQuantity > 0');
     }
 
     return query.getMany();

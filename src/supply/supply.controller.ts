@@ -53,6 +53,16 @@ export class SupplyController {
     required: false,
     description: 'Order by column:order',
   })
+  @ApiQuery({
+    name: 'showExpired',
+    required: false,
+    description: 'Show expired supplies',
+  })
+  @ApiQuery({
+    name: 'showWithoutQuantity',
+    required: false,
+    description: 'Show supplies without quantity',
+  })
   @Get()
   findAll(
     @Query('name') name?: string,
@@ -61,7 +71,12 @@ export class SupplyController {
     @Query('minQuantity') minQuantity?: number,
     @Query('maxQuantity') maxQuantity?: number,
     @Query('orderBy') orderBy?: string,
+    @Query('showExpired') showExpired?: string,
+    @Query('showWithoutQuantity') showWithoutQuantity?: string,
   ) {
+    const isShowExpired = showExpired === 'true';
+    const isShowWithoutQuantity = showWithoutQuantity === 'true';
+
     return this.supplyService.findAll(
       name,
       minPrice,
@@ -69,6 +84,8 @@ export class SupplyController {
       minQuantity,
       maxQuantity,
       orderBy,
+      isShowExpired,
+      isShowWithoutQuantity,
     );
   }
 
