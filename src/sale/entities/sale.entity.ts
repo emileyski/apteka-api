@@ -1,10 +1,10 @@
-import { Employee } from 'src/employee/entities/employee.entity';
+// import { Employee } from 'src/employee/entities/employee.entity';
 import { OrderItem } from 'src/sale/entities/order-item.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  // ManyToOne,
   OneToMany,
 } from 'typeorm';
 

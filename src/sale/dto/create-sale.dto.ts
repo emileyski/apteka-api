@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber } from 'class-validator';
 import { CreateOrderItemDto } from './orfer-item.dto';
 
 export class CreateSaleDto {
@@ -25,4 +25,13 @@ export class CreateSaleDto {
   })
   @IsNotEmpty()
   OrderItems: CreateOrderItemDto[];
+
+  @ApiProperty({
+    description: 'The email of the customer who made the sale',
+    example: 'example@example.com',
+    required: false,
+  })
+  @IsNotEmpty()
+  @IsEmail()
+  CustomerEmail?: string;
 }

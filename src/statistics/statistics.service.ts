@@ -141,4 +141,21 @@ export class StatisticsService {
 
     return await this.manufacturerRepository.query(query);
   }
+
+  async getTotalSalesCount(): Promise<number> {
+    const totalSales = await this.saleRepository
+      .createQueryBuilder('sale')
+      .getCount();
+
+    return totalSales;
+  }
+
+  async getTotalRevenue(): Promise<number> {
+    const totalRevenue = await this.saleRepository
+      .createQueryBuilder('sale')
+      .select('SUM(sale.TotalPrice)', 'TotalRevenue')
+      .getRawOne();
+
+    return totalRevenue.TotalRevenue;
+  }
 }

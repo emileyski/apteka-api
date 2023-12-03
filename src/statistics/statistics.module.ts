@@ -10,5 +10,6 @@ import { Manufacturer } from 'src/manufacturer/entities/manufacturer.entity';
   imports: [TypeOrmModule.forFeature([Medication, Sale, Manufacturer])],
   providers: [StatisticsService],
   controllers: [StatisticsController],
+  exports: [StatisticsService],
 })
 export class StatisticsModule {}

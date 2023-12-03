@@ -27,6 +27,11 @@ export class SaleController {
     return this.saleService.findAll();
   }
 
+  @Get(':email/send-report')
+  sendSalesReport(@Param('email') email: string) {
+    return this.saleService.sendSalesReport(email);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.saleService.findOne(+id);

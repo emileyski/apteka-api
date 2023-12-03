@@ -10,6 +10,7 @@ import { Sale } from './entities/sale.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { Repository } from 'typeorm';
 import { SupplyService } from 'src/supply/supply.service';
+import { ReportsService } from 'src/reports/reports.service';
 
 @Injectable()
 export class SaleService {
@@ -19,7 +20,14 @@ export class SaleService {
     @InjectRepository(OrderItem)
     private orderItemRepository: Repository<OrderItem>,
     private supplyService: SupplyService,
+    private reportsService: ReportsService,
   ) {}
+
+  async sendSalesReport(email: string) {
+    await this.reportsService.sendSalesReportByEmail(email);
+
+    return { message: `Sales report sent to ${email}` };
+  }
 
   async create(createSaleDto: CreateSaleDto) {
     const supplies = await this.supplyService.findByIds(
@@ -75,13 +83,23 @@ export class SaleService {
 
     await this.supplyService.saveMany(supplies);
 
-    return {
+    const saleInfo = {
       ...sale,
       OrderItems: orderItems.map((orderItem) => {
         delete orderItem.Sale;
         return orderItem;
       }),
     };
+
+    if (createSaleDto.CustomerEmail && createSaleDto.CustomerEmail !== '') {
+      const orderWithFullInformation = await this.findOne(saleInfo.SaleID);
+      await this.reportsService.sendSaleReceiptByEmail(
+        orderWithFullInformation,
+        createSaleDto.CustomerEmail,
+      );
+    }
+
+    return saleInfo;
   }
 
   async findAll() {
