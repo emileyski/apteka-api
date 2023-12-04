@@ -18,9 +18,9 @@ import { ReportsModule } from './reports/reports.module';
     TypeOrmModule.forRoot({
       type: 'mssql',
       host: 'sql.bsite.net\\MSSQL2016',
-      username: 'emilevi4_db',
-      password: 'emilevi4',
-      database: 'emilevi4_db',
+      username: 'apteka_db',
+      password: 'apteka',
+      database: 'apteka_db',
       autoLoadEntities: true,
       synchronize: true,
       options: {

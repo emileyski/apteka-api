@@ -25,11 +25,11 @@ export class StatisticsService {
         SUM(oi.Quantity) AS TotalSold,
         SUM(oi.Quantity * s.UnitPrice) AS TotalRevenue
       FROM
-        emilevi4_db.dbo.medication m
+        apteka_db.dbo.medication m
       JOIN
-        emilevi4_db.dbo.supply s ON m.MedicationID = s.medicationMedicationID
+        apteka_db.dbo.supply s ON m.MedicationID = s.medicationMedicationID
       JOIN
-        emilevi4_db.dbo.order_item oi ON s.SupplyID = oi.supplySupplyID
+        apteka_db.dbo.order_item oi ON s.SupplyID = oi.supplySupplyID
       GROUP BY
         m.MedicationID,
         m.TradeName,
@@ -128,11 +128,11 @@ export class StatisticsService {
         mf.ManufacturerName,
         AVG(s.UnitPrice) AS AvgUnitPrice
       FROM 
-        emilevi4_db.dbo.manufacturer mf
+        apteka_db.dbo.manufacturer mf
       JOIN 
-        emilevi4_db.dbo.medication m ON mf.ManufacturerID = m.manufacturerManufacturerID
+        apteka_db.dbo.medication m ON mf.ManufacturerID = m.manufacturerManufacturerID
       JOIN 
-        emilevi4_db.dbo.supply s ON m.MedicationID = s.medicationMedicationID
+        apteka_db.dbo.supply s ON m.MedicationID = s.medicationMedicationID
       GROUP BY 
         mf.ManufacturerID, mf.ManufacturerName
       ORDER BY 
