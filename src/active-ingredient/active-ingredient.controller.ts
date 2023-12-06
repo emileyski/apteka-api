@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  BadRequestException,
 } from '@nestjs/common';
 import { ActiveIngredientService } from './active-ingredient.service';
 import { CreateActiveIngredientDto } from './dto/create-active-ingredient.dto';
@@ -21,7 +22,9 @@ export class ActiveIngredientController {
 
   @Post()
   create(@Body() createActiveIngredientDto: CreateActiveIngredientDto) {
-    console.log('in controller');
+    if (parseInt(createActiveIngredientDto.Dosage) < 0)
+      throw new BadRequestException('Dosage must be positive');
+
     return this.activeIngredientService.create(createActiveIngredientDto);
   }
 
