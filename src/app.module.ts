@@ -12,10 +12,12 @@ import { SaleModule } from './sale/sale.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { MailModule } from './mail/mail.module';
 import { ReportsModule } from './reports/reports.module';
+import { SqlModule } from './sql/sql.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
+      name: 'default', // Specify the connection name as 'default'
       type: 'mssql',
       host: 'sql.bsite.net\\MSSQL2016',
       username: 'apteka_db',
@@ -24,8 +26,8 @@ import { ReportsModule } from './reports/reports.module';
       autoLoadEntities: true,
       synchronize: true,
       options: {
-        encrypt: true, // Важливий параметр для самопідписаних сертифікатів
-        trustServerCertificate: true, // Ігнорує помилку самопідписаного сертифікату
+        encrypt: true,
+        trustServerCertificate: true,
       },
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
     }),
@@ -41,6 +43,7 @@ import { ReportsModule } from './reports/reports.module';
     StatisticsModule,
     MailModule,
     ReportsModule,
+    SqlModule,
   ],
   controllers: [],
   providers: [],
