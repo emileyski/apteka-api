@@ -12,7 +12,7 @@ export class MailService {
     //TODO: change to your email and password
     const transporter = nodemailer.createTransport({
       service: 'gmail',
-      auth: { user: 'bohdan.ilienko@nure.ua', pass: 'cewholrtxflavjru' },
+      auth: { user: 'yelyzaveta.zorenko@nure.ua', pass: 'fhdvaqbrmdhdrpbw' },
     });
 
     // Получите только имя файла из пути
