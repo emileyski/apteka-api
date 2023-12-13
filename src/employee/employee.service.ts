@@ -48,7 +48,7 @@ export class EmployeeService {
     return user;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, removeCredentials = true) {
     const employee = await this.employeeRepository.findOne({
       where: { EmployeeID: id },
       relations: ['Position'],
@@ -58,6 +58,9 @@ export class EmployeeService {
       throw new NotFoundException(`Employee #${id} not found`);
     }
 
+    if (!removeCredentials) {
+      return employee;
+    }
     return this.removeCredentials(employee);
   }
 

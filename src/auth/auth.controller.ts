@@ -1,4 +1,11 @@
-import { Body, Controller, Get, HttpCode, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Tokens } from 'src/core/interfaces/tokens.interface';
 import { Public } from 'src/core/decorators/public.decorator';
@@ -35,7 +42,6 @@ export class AuthController {
   logOut(@UserId() userId: number): void {
     return this.authService.logOut(userId);
   }
-
 
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiForbiddenResponse({ description: 'Invalid refresh token' })

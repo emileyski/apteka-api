@@ -40,8 +40,10 @@ export class AuthService {
   }
 
   async refreshTokens(userId: number, token: string): Promise<Tokens> {
+    console.log('refreshTokens', token, userId);
+
     const { Token: hashedRefreshToken, Position } =
-      await this.employeeService.findOne(userId);
+      await this.employeeService.findOne(userId, false);
 
     if (!hashedRefreshToken) {
       throw new ForbiddenException('Invalid refresh token');
