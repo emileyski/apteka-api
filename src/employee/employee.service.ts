@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from './entities/employee.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { hash } from 'argon2';
 
 @Injectable()
 export class EmployeeService {
@@ -13,8 +18,11 @@ export class EmployeeService {
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto) {
+    const hashedPassword = await hash(createEmployeeDto.Password);
+
     const employee = this.employeeRepository.create({
       ...createEmployeeDto,
+      Password: hashedPassword,
       Position: { PositionID: createEmployeeDto.PositionID },
     });
 
@@ -25,6 +33,15 @@ export class EmployeeService {
     return this.employeeRepository.find({ relations: ['Position'] });
   }
 
+  async findOneOrThrowByEmail(email: string): Promise<Employee> {
+    const user = await this.employeeRepository.findOneBy({
+      Email: email,
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
   async findOne(id: number) {
     const employee = await this.employeeRepository.findOne({
       where: { EmployeeID: id },
@@ -36,6 +53,24 @@ export class EmployeeService {
     }
 
     return employee;
+  }
+
+  async updateRefreshToken(
+    EmployeeID: number,
+    refreshToken: string,
+  ): Promise<Employee> {
+    const user = await this.findOne(EmployeeID);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    try {
+      this.employeeRepository.merge(user, { Token: refreshToken });
+      return await this.employeeRepository.save(user);
+    } catch (error) {
+      throw new ConflictException(
+        'Some error occured while updating user token',
+      );
+    }
   }
 
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {

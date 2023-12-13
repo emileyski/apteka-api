@@ -1,4 +1,5 @@
 // import { Employee } from 'src/employee/entities/employee.entity';
+import { Employee } from 'src/employee/entities/employee.entity';
 import { OrderItem } from 'src/sale/entities/order-item.entity';
 import {
   Entity,
@@ -6,6 +7,7 @@ import {
   Column,
   // ManyToOne,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -13,8 +15,8 @@ export class Sale {
   @PrimaryGeneratedColumn()
   SaleID: number;
 
-  // @ManyToOne(() => Employee, { onDelete: 'CASCADE' })
-  // Employee: Employee;
+  @ManyToOne(() => Employee, { onDelete: 'CASCADE' })
+  Employee: Employee;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   TotalPrice: number;

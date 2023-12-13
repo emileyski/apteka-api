@@ -14,7 +14,7 @@ export class Employee {
   EmployeeID: number;
 
   @Column({ length: 50, nullable: false })
-  Login: string;
+  Email: string;
 
   @Column({ length: 50, nullable: false })
   Password: string;
@@ -24,6 +24,9 @@ export class Employee {
 
   @Column({ type: 'date', nullable: false })
   BirthDate: Date;
+
+  @Column({ nullable: true })
+  Token?: string;
 
   @ManyToOne(() => Position, (position) => position.Employees, {
     onDelete: 'CASCADE',
@@ -36,8 +39,8 @@ export class Employee {
   @Column({ length: 20, nullable: true })
   PhoneNumber: string;
 
-  // @OneToMany(() => Sale, (sale) => sale.Employee, {
-  //   onDelete: 'CASCADE',
-  // })
-  // Sales: Sale[];
+  @OneToMany(() => Sale, (sale) => sale.Employee, {
+    onDelete: 'CASCADE',
+  })
+  Sales: Sale[];
 }
