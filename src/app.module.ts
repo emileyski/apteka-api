@@ -13,6 +13,7 @@ import { StatisticsModule } from './statistics/statistics.module';
 import { MailModule } from './mail/mail.module';
 import { ReportsModule } from './reports/reports.module';
 import { SqlModule } from './sql/sql.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { SqlModule } from './sql/sql.module';
       },
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
     }),
+    AuthModule,
     MedicationModule,
     ManufacturerModule,
     ActiveIngredientModule,

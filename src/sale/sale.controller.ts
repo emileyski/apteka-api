@@ -6,20 +6,24 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { SaleService } from './sale.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { AccessTokenGuard } from 'src/core/guards/access-token.guard';
+import { UserId } from 'src/core/decorators/user-id.decorator';
 
 @ApiTags('sale')
 @Controller('sale')
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}
 
+  @UseGuards(AccessTokenGuard)
   @Post()
-  create(@Body() createSaleDto: CreateSaleDto) {
-    return this.saleService.create(createSaleDto);
+  create(@Body() createSaleDto: CreateSaleDto, @UserId() userId: number) {
+    return this.saleService.create(createSaleDto, userId);
   }
 
   @Get()

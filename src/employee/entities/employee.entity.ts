@@ -13,10 +13,10 @@ export class Employee {
   @PrimaryGeneratedColumn()
   EmployeeID: number;
 
-  @Column({ length: 50, nullable: false })
+  @Column({ length: 255, nullable: false, unique: true })
   Email: string;
 
-  @Column({ length: 50, nullable: false })
+  @Column()
   Password: string;
 
   @Column({ length: 100, nullable: false })

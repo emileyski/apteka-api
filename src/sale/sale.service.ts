@@ -29,7 +29,7 @@ export class SaleService {
     return { message: `Sales report sent to ${email}` };
   }
 
-  async create(createSaleDto: CreateSaleDto) {
+  async create(createSaleDto: CreateSaleDto, userId: number) {
     const supplies = await this.supplyService.findByIds(
       createSaleDto.OrderItems.map((orderItem) => orderItem.SupplyID),
     );
@@ -68,6 +68,7 @@ export class SaleService {
         Quantity: orderItem.Quantity,
       })),
       TotalPrice,
+      Employee: { EmployeeID: userId },
     });
 
     await this.saleRepository.save(sale);

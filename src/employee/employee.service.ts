@@ -30,18 +30,24 @@ export class EmployeeService {
   }
 
   findAll() {
-    return this.employeeRepository.find({ relations: ['Position'] });
+    return this.employeeRepository
+      .find({ relations: ['Position'] })
+      .then((employees) => {
+        return employees.map((employee) => this.removeCredentials(employee));
+      });
   }
 
   async findOneOrThrowByEmail(email: string): Promise<Employee> {
-    const user = await this.employeeRepository.findOneBy({
-      Email: email,
+    const user = await this.employeeRepository.findOne({
+      where: { Email: email },
+      relations: ['Position'],
     });
     if (!user) {
       throw new NotFoundException('User not found');
     }
     return user;
   }
+
   async findOne(id: number) {
     const employee = await this.employeeRepository.findOne({
       where: { EmployeeID: id },
@@ -52,7 +58,7 @@ export class EmployeeService {
       throw new NotFoundException(`Employee #${id} not found`);
     }
 
-    return employee;
+    return this.removeCredentials(employee);
   }
 
   async updateRefreshToken(
@@ -96,5 +102,11 @@ export class EmployeeService {
     return {
       message: `Employee #${id} deleted`,
     };
+  }
+
+  removeCredentials(employee: Employee) {
+    delete employee.Password;
+    delete employee.Token;
+    return employee;
   }
 }
