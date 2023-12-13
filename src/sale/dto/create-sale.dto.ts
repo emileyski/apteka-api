@@ -26,3 +26,4 @@ export class CreateSaleDto {
   @IsEmail()
   CustomerEmail?: string;
 }
+//
