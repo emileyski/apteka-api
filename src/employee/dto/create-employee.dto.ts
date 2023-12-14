@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Matches } from 'class-validator';
 
 export class CreateEmployeeDto {
   @ApiProperty({
@@ -52,7 +52,6 @@ export class CreateEmployeeDto {
     example: 1,
   })
   @IsNotEmpty()
-  @IsString()
   PositionID: number;
 
   @ApiProperty({
@@ -71,9 +70,17 @@ export class CreateEmployeeDto {
     type: String,
     maxLength: 20,
     nullable: true,
-    example: 'Phone Number',
+    example: '+380935558877',
   })
   @IsNotEmpty()
   @IsString()
+  @Matches(
+    new RegExp(
+      '^\\+?3?8?(0[5-9][0-9]\\d{7})$|^\\+?3?8?(0[0-4]\\d{8})$|^\\+?3?8?(\\d{9})$',
+    ),
+    {
+      message: 'Phone number must be in international format',
+    },
+  )
   PhoneNumber: string;
 }
