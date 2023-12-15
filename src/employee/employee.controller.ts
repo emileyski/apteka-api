@@ -11,7 +11,7 @@ import {
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/core/guards/access-token.guard';
 import { UserId } from 'src/core/decorators/user-id.decorator';
 
@@ -46,6 +46,7 @@ export class EmployeeController {
     return this.employeeService.findAll();
   }
 
+  @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
   @Get('profile')
   getProfile(@UserId() userId: number) {
