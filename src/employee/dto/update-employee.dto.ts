@@ -3,16 +3,16 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateEmployeeDto {
   @ApiProperty({
-    description: 'Employee login',
+    description: 'Employee email',
     type: String,
     maxLength: 50,
     nullable: false,
     required: false,
-    example: 'login',
+    example: 'example@gmail.com',
   })
   @IsNotEmpty()
   @IsString()
-  Login?: string;
+  Email?: string;
 
   @ApiProperty({
     description: 'Employee password',

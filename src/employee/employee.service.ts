@@ -26,7 +26,8 @@ export class EmployeeService {
       Position: { PositionID: createEmployeeDto.PositionID },
     });
 
-    return this.employeeRepository.save(employee);
+    const savedEmployee = await this.employeeRepository.save(employee);
+    return this.removeCredentials(savedEmployee);
   }
 
   findAll() {

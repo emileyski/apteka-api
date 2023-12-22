@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
 export class CreateMedicationDto {
   @ApiProperty({
@@ -57,4 +57,14 @@ export class CreateMedicationDto {
   @IsNotEmpty()
   @IsNumber()
   CategoryID: number;
+
+  @ApiProperty({
+    description: 'The active ingredient dosage',
+    default: 1,
+    type: Number,
+  })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  ActiveIngredientDosage: number;
 }

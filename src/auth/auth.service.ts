@@ -62,8 +62,8 @@ export class AuthService {
   //#region reusable methods
   private async generateTokens(payload: JwtPayload): Promise<Tokens> {
     const [accessToken, refreshToken] = await Promise.all([
-      this.signToken(payload, '1d'), //TODO: refactor to ENV
-      this.signToken(payload, '7d'),
+      this.signToken(payload, process.env.ACCESS_TOKEN_EXPIRES_IN || '1d'), //TODO: refactor to ENV
+      this.signToken(payload, process.env.REFRESH_TOKEN_EXPIRES_IN || '7d'),
     ]);
     const hashedRefreshToken = await hash(refreshToken);
     await this.employeeService.updateRefreshToken(
@@ -76,7 +76,7 @@ export class AuthService {
 
   private async signToken(payload: JwtPayload, expiresIn: string) {
     return this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_KEY || 'some_jwt_secret',
+      secret: process.env.JWT_KEY || 'default_jwt_secret',
       //   audience: 'audience',
       //   issuer: 'issuer',
       expiresIn,

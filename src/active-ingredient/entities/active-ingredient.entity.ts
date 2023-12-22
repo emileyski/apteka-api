@@ -9,8 +9,9 @@ export class ActiveIngredient {
   @Column({ length: 100, nullable: false })
   IngredientName: string;
 
-  @Column({ length: 50, nullable: false })
-  Dosage: string;
+  //TODO:deside if we need this (we can get it from medication)
+  // @Column({ length: 50, nullable: false })
+  // Dosage: string;
 
   @OneToMany(() => Medication, (medication) => medication.ActiveIngredient)
   Medications: Medication[];

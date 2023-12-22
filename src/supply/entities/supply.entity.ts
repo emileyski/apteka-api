@@ -19,7 +19,7 @@ export class Supply {
   @Column({ type: 'int', nullable: false })
   CurrentQuantity: number;
 
-  @Column({ type: 'date', default: () => 'GETDATE()' })
+  @Column({ type: 'date', default: () => 'CURRENT_TIMESTAMP' })
   SupplyDate: Date;
 
   @Column({ type: 'date', nullable: false })

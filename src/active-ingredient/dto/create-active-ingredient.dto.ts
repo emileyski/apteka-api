@@ -13,14 +13,15 @@ export class CreateActiveIngredientDto {
   @IsString()
   IngredientName: string;
 
-  @ApiProperty({
-    description: 'Dosage of the active ingredient',
-    type: String,
-    maxLength: 50,
-    required: true,
-    example: '500mg',
-  })
-  @IsNotEmpty()
-  @IsString()
-  Dosage: string;
+  //TODO: decide if we need this (we can get it from medication)
+  // @ApiProperty({
+  //   description: 'Dosage of the active ingredient',
+  //   type: String,
+  //   maxLength: 50,
+  //   required: true,
+  //   example: '500mg',
+  // })
+  // @IsNotEmpty()
+  // @IsString()
+  // Dosage: string;
 }

@@ -27,6 +27,9 @@ export class Medication {
   })
   Manufacturer: Manufacturer;
 
+  @Column({ nullable: false, type: 'decimal', precision: 10, scale: 2 })
+  ActiveIngredientDosage: number;
+
   @ManyToOne(
     () => ActiveIngredient,
     (activeIngredient) => activeIngredient.Medications,
