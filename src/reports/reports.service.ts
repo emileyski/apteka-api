@@ -33,7 +33,6 @@ export class ReportsService {
 
     // Add report details
     pdfDoc.fontSize(16).text('Sales Report', { align: 'center' });
-    pdfDoc.fontSize(12).text(`Date: ${new Date().toLocaleDateString()}`);
     pdfDoc.fontSize(12).text('--------------------------');
 
     // Add total sales information
@@ -62,6 +61,9 @@ export class ReportsService {
       pdfDoc.fontSize(12).text('--------------------------');
     }
 
+    pdfDoc
+      .fontSize(12)
+      .text(`This report was generated on: ${new Date().toLocaleDateString()}`);
     // End the PDF document
     pdfDoc.end();
 
@@ -86,7 +88,7 @@ export class ReportsService {
     // Заполните PDF данными из saleInfo
     pdfDoc.fontSize(14).text(`Receipt for Sale ID: ${saleInfo.SaleID}`);
     pdfDoc.fontSize(12).text(`Total Price: $${saleInfo.TotalPrice}`);
-    pdfDoc.fontSize(12).text(`Sale Date: ${saleInfo.SaleDate}`);
+    // pdfDoc.fontSize(12).text(`Sale Date: ${saleInfo.SaleDate}`);
     pdfDoc.fontSize(12).text('--------------------------');
 
     // Переберите OrderItems
@@ -130,6 +132,8 @@ export class ReportsService {
     pdfDoc
       .fontSize(12)
       .text('Thank you for your purchase! We hope to see you again :)');
+
+    pdfDoc.fontSize(12).text(`Sale Date: ${saleInfo.SaleDate}`);
 
     // Завершите создание PDF
     pdfDoc.end();
